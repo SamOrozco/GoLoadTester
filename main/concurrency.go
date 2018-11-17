@@ -1,20 +1,20 @@
 package main
 
 import (
-	"concurrency_fun/requests"
 	"fmt"
+	"load_tester/requests"
 	"strings"
 	"time"
 )
 
 func main() {
-	requestCount := 5
+	requestCount := 10
 	messageChannel := make(chan string)
 	durationChannel := make(chan int64)
 	errorChannel := make(chan error)
 	for i := 0; i < requestCount; i++ {
 		request := requests.NewGetRequest(
-			"http://google.com",
+			"http://facebook.com",
 			messageChannel,
 			durationChannel,
 			errorChannel)
@@ -32,15 +32,15 @@ func main() {
 		errorResponseChannel <- sb.String()
 	}()
 
-	// read all messages from our messages channel
-	messageBodyResponse := make(chan string)
-	go func() {
-		var sb strings.Builder
-		for message := range messageChannel {
-			sb.WriteString(message + "\r\n")
-		}
-		messageBodyReponse <- sb.String()
-	}()
+	//// read all messages from our messages channel
+	//messageBodyResponse := make(chan string)
+	//go func() {
+	//	var sb strings.Builder
+	//	for message := range messageChannel {
+	//		sb.WriteString(message + "\r\n")
+	//	}
+	//	messageBodyReponse <- sb.String()
+	//}()
 
 	total := int64(0)
 	for i := 0; i < requestCount; i++ {
@@ -55,7 +55,7 @@ func main() {
 		println("No errors")
 	}
 
-	println(<-messageBodyReponse)
+	//println(<-messageBodyReponse)
 
 	print(fmt.Sprintf("Average request time %d ms", (total/int64(requestCount))/1000000))
 }
