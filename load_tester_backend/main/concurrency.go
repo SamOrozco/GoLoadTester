@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"load_tester/requests"
+	"load_tester/load_tester_backend/requests"
 	"net/http"
 	"time"
 )
