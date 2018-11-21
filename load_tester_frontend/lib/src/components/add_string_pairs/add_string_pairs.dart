@@ -48,6 +48,8 @@ class AddStringPairsComponent {
     if (this.keyValuePairs?.length == 1) {
       this.keyValuePairs?.remove(pair);
       appendEmptyPair();
+    } else {
+      this.keyValuePairs?.remove(pair);
     }
   }
 

@@ -2,11 +2,16 @@
 @import url(https://fonts.googleapis.com/css?family=Material+Icons);
 
 body {
-  max-width: 600px;
-  margin: 0 auto;
-  padding: 5vw;
+  /*max-width: 700px;*/
+  /*margin: 0 auto;*/
+  background-color: #f5f5f5;
 }
 
+header .material-header {
+  background-color: crimson;
+}
 * {
   font-family: Roboto, Helvetica, Arial, sans-serif;
 }
+
+

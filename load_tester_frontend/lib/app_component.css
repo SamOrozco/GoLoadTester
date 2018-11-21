@@ -1,3 +1,15 @@
-:host {
+body {
     /* This is equivalent of the 'body' selector of a page. */
+    margin: 0;
+    padding: 0;
+}
+
+#nav_header {
+    background-color: #4b830d;
+}
+
+#content_container {
+    margin-top: 12px;
+    margin-left: 62px;
+    max-width: 700px;
 }

@@ -1,10 +1,12 @@
-<h1>Add {{name}}</h1>
+<h2>{{name}}</h2>
 <div id="row_container" *ngFor="let kv of keyValuePairs">
     <material-input [(ngModel)]="kv.key"
                     [label]="keyTitle"
                     floatingLabel>
 
     </material-input>
+    <material-icon icon="arrow_forward">
+    </material-icon>
     <material-input [(ngModel)]="kv.value"
                     [label]="valueTitle"
                     floatingLabel

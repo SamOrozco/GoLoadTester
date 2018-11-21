@@ -1,3 +1,9 @@
 #row_container{
+    margin: 0;
+    padding: 0;
     width: 100%;
+}
+
+#row_container > * {
+    margin-right: 32px;
 }

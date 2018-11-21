@@ -1,0 +1,17 @@
+<h2>Configure Test Schedule</h2>
+<div>
+    <div class="config_item">
+        <material-input label="Request Count" floatingLabel>
+        </material-input>
+    </div>
+    <div class="config_item">
+        <material-input label="Request Interval" floatingLabel>
+        </material-input>
+        <material-dropdown-select
+                id="request_dropdown"
+                buttonText="{{selectedValueString}}"
+                [(selection)]="value"
+                [options]="options">
+        </material-dropdown-select>
+    </div>
+</div>
