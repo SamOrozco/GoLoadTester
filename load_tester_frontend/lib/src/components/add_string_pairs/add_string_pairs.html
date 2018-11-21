@@ -1,0 +1,17 @@
+<h1>Add {{name}}</h1>
+<div id="row_container" *ngFor="let kv of keyValuePairs">
+    <material-input [(ngModel)]="kv.key"
+                    [label]="keyTitle"
+                    floatingLabel>
+
+    </material-input>
+    <material-input [(ngModel)]="kv.value"
+                    [label]="valueTitle"
+                    floatingLabel
+                    (keypress)="addNewItem(kv)">
+
+    </material-input>
+    <material-button (trigger)="removePair(kv)">
+        <material-icon icon="delete"></material-icon>
+    </material-button>
+</div>

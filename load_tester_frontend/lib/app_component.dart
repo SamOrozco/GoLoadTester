@@ -1,4 +1,6 @@
 import 'package:angular/angular.dart';
+import 'package:angular_components/angular_components.dart';
+import 'package:load_tester_frotend/src/components/add_request/add_request.dart';
 
 import 'src/todo_list/todo_list_component.dart';
 
@@ -9,7 +11,13 @@ import 'src/todo_list/todo_list_component.dart';
   selector: 'my-app',
   styleUrls: ['app_component.css'],
   templateUrl: 'app_component.html',
-  directives: [TodoListComponent],
+  directives: [
+    TodoListComponent,
+    AddRequest,
+  ],
+  providers: [
+    materialProviders,
+  ],
 )
 class AppComponent {
   // Nothing here yet. All logic is in TodoListComponent.
