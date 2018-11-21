@@ -18,6 +18,7 @@ class RequestUrlComponent {
   static final List<String> values = ["GET", "POST", "PUT"];
   static final SelectionOptions options = SelectionOptions.fromList(values);
   SelectionModel selectedValue = new SelectionModel.single(selected: values[0]);
+  MaterialInputComponent materialInputComp;
 
   RequestUrlComponent() {}
 
@@ -27,8 +28,12 @@ class RequestUrlComponent {
     this.selectedValue = model;
   }
 
-  Stream<String> get valueChanges =>
-      selectedValue.selectionChanges.map((data) => data.first.toString());
+  @ViewChild('url_input')
+  void set MaterialInputComp(MaterialInputComponent comp) {
+    this.materialInputComp = comp;
+  }
 
-  String get selectedValueString => selectedValue.selectedValues.take(1).first;
+  String get selectedRequestType => selectedValue.selectedValues.take(1).first;
+
+  String get url => this.materialInputComp?.inputText;
 }

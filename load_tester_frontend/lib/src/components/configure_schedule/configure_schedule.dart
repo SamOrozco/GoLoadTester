@@ -14,24 +14,26 @@ import 'package:angular_components/angular_components.dart';
   ],
 )
 class ConfigureScheduleComponent {
+  static final SelectionOptions options =
+      SelectionOptions.fromList(timeUnitValues);
+  SelectionModel selectedValue =
+      new SelectionModel.single(selected: timeUnitValues[0]);
   static final List<String> timeUnitValues = [
     "Milliseconds",
     "Seconds",
     "Minutes",
   ];
-  static final SelectionOptions options =
-      SelectionOptions.fromList(timeUnitValues);
-  SelectionModel selectedValue =
-      new SelectionModel.single(selected: timeUnitValues[0]);
+
+  int requestCount;
+  int timeInterval;
   ConfigureScheduleComponent();
 
   SelectionModel get value => selectedValue;
+
   void set value(SelectionModel model) {
     this.selectedValue = model;
   }
 
-  Stream<String> get valueChanges =>
-      selectedValue.selectionChanges.map((data) => data.first.toString());
-
-  String get selectedValueString => selectedValue.selectedValues.take(1).first;
+  String get selectedTimeTypeString =>
+      selectedValue.selectedValues.take(1).first;
 }

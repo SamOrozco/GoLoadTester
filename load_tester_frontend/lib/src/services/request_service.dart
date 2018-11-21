@@ -4,8 +4,9 @@ import 'dart:convert';
 
 class RequestService {
   final Client _http;
+  final Environment _environment;
 
-  RequestService(this._http);
+  RequestService(this._http, this._environment);
   void createRequest(ScheduleRequest request) {
     var jsonString = jsonEncode(request);
     print(jsonString);

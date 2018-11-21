@@ -3,8 +3,8 @@
         <request-url id="request_url" #request_url></request-url>
         <add-string-pairs id="add_headers" #add_headers></add-string-pairs>
         <add-string-pairs id="add_query_params" #add_query_params></add-string-pairs>
-        <configure-schedule></configure-schedule>
-        <material-button raised id="submit_button">
+        <configure-schedule id="configure_schedule" #configure_schedule></configure-schedule>
+        <material-button raised id="submit_button" (trigger)="submitRequest()">
             Submit
         </material-button>
     </form>
