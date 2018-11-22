@@ -15,12 +15,30 @@ const (
 )
 
 type Request struct {
-	requestUrl  string
-	startTime   time.Time
-	requestType string
-	headers     map[string]string
-	queryParams map[string]string
-	client      *http.Client
+	RequestUrl  string
+	StartTime   time.Time
+	RequestType string
+	Headers     map[string]string
+	QueryParams map[string]string
+	Client      *http.Client
+}
+
+type RequestResponse struct {
+	Id        string
+	Message     string
+	ErrString   string
+	Duration    int
+	RequestUrl  string
+	RequestType string
+}
+type ScheduleRequest struct {
+	RequestUrl    string            `json:"url"`
+	RequestType   string            `json:"requestType"`
+	Headers       map[string]string `json:"headers"`
+	QueryParams   map[string]string `json:"queryParams"`
+	RequestCount  int               `json:"requestCount"`
+	IntervalCount int               `json:"intervalCount"`
+	IntervalType  string            `json:"intervalType"`
 }
 
 func NewGetRequest(
@@ -29,39 +47,39 @@ func NewGetRequest(
 	params map[string]string,
 	client *http.Client) *Request {
 	return &Request{
-		requestUrl:  requestUrl,
-		headers:     headers,
-		queryParams: params,
-		client:      client,
+		RequestUrl:  requestUrl,
+		Headers:     headers,
+		QueryParams: params,
+		Client:      client,
 	}
 }
 
 func (r Request) Run() (string, int, error) {
 	println("Running")
-	r.startTime = time.Now()
+	r.StartTime = time.Now()
 
 	// building request
-	req, err := http.NewRequest(GET, r.requestUrl, nil)
+	req, err := http.NewRequest(GET, r.RequestUrl, nil)
 	if err != nil {
 		return "", 0, err
 	}
 
-	if r.headers != nil && len(r.headers) > 0 {
+	if r.Headers != nil && len(r.Headers) > 0 {
 		// set headers
-		for key, value := range r.headers {
+		for key, value := range r.Headers {
 			req.Header.Add(key, value)
 		}
 	}
 
-	if r.queryParams != nil && len(r.queryParams) > 0 {
+	if r.QueryParams != nil && len(r.QueryParams) > 0 {
 		queries := req.URL.Query()
-		for key, value := range r.queryParams {
+		for key, value := range r.QueryParams {
 			queries.Add(key, value)
 		}
 		req.URL.RawQuery = queries.Encode()
 	}
 
-	resp, err := r.client.Do(req)
+	resp, err := r.Client.Do(req)
 	if err != nil {
 		return "", 0, err
 	}
@@ -69,7 +87,7 @@ func (r Request) Run() (string, int, error) {
 		return "", 0, errors.New(fmt.Sprintf("Status code not 200, status code: %s", resp.StatusCode))
 	}
 
-	duration := int(time.Since(r.startTime).Nanoseconds())
+	duration := int(time.Since(r.StartTime).Nanoseconds())
 	bodyString, err := readBody(resp.Body)
 	if err != nil {
 		return "", 0, err

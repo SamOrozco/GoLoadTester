@@ -53,8 +53,7 @@ class AddRequest {
   }
 
   void submitRequest() {
-    var sched = getRequestFromForm();
-    print(jsonEncode(sched));
+    this.bloc.createScheduleRequest(getRequestFromForm());
   }
 
   ScheduleRequest getRequestFromForm() {
@@ -66,12 +65,12 @@ class AddRequest {
     var timeInterval = this.configureScheduleComponent.timeInterval;
     var timeType = this.configureScheduleComponent.selectedTimeTypeString;
     return new ScheduleRequest(
-        url,
-        requestType,
-        KeyValuePair.getMapFromKeyValues(headers),
-        KeyValuePair.getMapFromKeyValues(queryParams),
-        requestCount,
-        timeInterval,
-        timeType);
+        url: url,
+        requestType: requestType,
+        headers: KeyValuePair.getMapFromKeyValues(headers),
+        queryParams: KeyValuePair.getMapFromKeyValues(queryParams),
+        requestCount: requestCount,
+        intervalCount: timeInterval,
+        intervalType: timeType);
   }
 }

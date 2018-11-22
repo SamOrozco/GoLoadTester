@@ -4,6 +4,7 @@ part 'ScheduleRequest.g.dart';
 
 @JsonSerializable(nullable: false)
 class ScheduleRequest {
+  @JsonKey(name: 'url')
   final String url;
   final String requestType;
   final Map<String, String> headers;

@@ -8,7 +8,6 @@ class RequestService {
 
   RequestService(this._http, this._environment);
   void createRequest(ScheduleRequest request) {
-    var jsonString = jsonEncode(request);
-    print(jsonString);
+    print(json.encode(request.toJson()));
   }
 }

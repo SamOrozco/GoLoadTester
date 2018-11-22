@@ -24,8 +24,13 @@ class ConfigureScheduleComponent {
     "Minutes",
   ];
 
-  int requestCount;
-  int timeInterval;
+  String requestCountString;
+  String timeIntervalString;
+
+  int get requestCount => int.tryParse(requestCountString);
+
+  int get timeInterval => int.tryParse(timeIntervalString);
+
   ConfigureScheduleComponent();
 
   SelectionModel get value => selectedValue;
