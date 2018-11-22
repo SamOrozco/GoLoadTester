@@ -7,7 +7,12 @@ class RequestService {
   final Environment _environment;
 
   RequestService(this._http, this._environment);
-  void createRequest(ScheduleRequest request) {
-    print(json.encode(request.toJson()));
+
+  void createRequest(ScheduleRequest request) async {
+    var body = jsonEncode(request.toJson());
+    print(body);
+    var resp = await _http.post("https://connector1.ngrok.io/schedule/request",
+        headers: {"Content-type": "application/json"}, body: body);
+    print(resp.body);
   }
 }

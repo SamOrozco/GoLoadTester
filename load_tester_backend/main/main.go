@@ -1,6 +1,7 @@
 package main
 
 import (
+	"cloud.google.com/go/firestore"
 	"context"
 	"firebase.google.com/go"
 	"fmt"
@@ -31,15 +32,18 @@ func main() {
 	server.Run()
 }
 
-
 func (s Server) Run() {
 	e := echo.New()
 	e.Use(middleware.Logger())
+	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
+		AllowOrigins: []string{"http://localhost:8080"},
+		AllowMethods: []string{http.MethodGet, http.MethodPut, http.MethodPost, http.MethodDelete},
+	}))
 	e.POST("schedule/request", s.CreateScheduleRequest)
 	e.Start(":9000")
 }
 
-const MAX_CONCURRENT = 3
+const MAX_CONCURRENT = 10
 
 func (s Server) CreateScheduleRequest(c echo.Context) error {
 	// todo validate input
@@ -72,19 +76,27 @@ func (s Server) CreateScheduleRequest(c echo.Context) error {
 	// response channel is the channel all the responses will be written to
 	respChannel, _ := schedule.Run()
 
+	// firebase schedule record
 	uid, _ := uuid.NewUUID()
-	col := uid.String()
+	schedId := uid.String()
+	fbSchedule := requests.Schedule{
+		Id:           schedId,
+		Name:         schedId,
+		StartTime:    time.Now(),
+		RequestCount: schedRequest.RequestCount,
+	}
+
+	_, err = s.createSchedule(fbSchedule)
+	if err != nil {
+		panic(err)
+	}
 	go func() {
 		for resp := range respChannel {
-			client, err := s.fireApp.Firestore(ctx)
-			if err != nil {
-				panic(err)
-			}
-
-			ref := client.Collection(col)
+			ref := s.getRequestCollection()
 			docRef := ref.NewDoc()
 			// important setting the key on this doc
 			resp.Id = docRef.ID
+			resp.ScheduleId = schedId
 			res, err := docRef.Create(ctx, resp)
 			if err != nil {
 				panic(err)
@@ -93,7 +105,10 @@ func (s Server) CreateScheduleRequest(c echo.Context) error {
 		}
 	}()
 	//<-doneChannel
-	return c.String(http.StatusOK, "")
+	response := &requests.CreateScheduleResponse{
+		ScheduleId: schedId,
+	}
+	return c.JSON(http.StatusOK, response)
 }
 
 func (s Server) getDurationFromRequest(req requests.ScheduleRequest) (time.Duration, error) {
@@ -109,4 +124,26 @@ func (s Server) getDurationFromRequest(req requests.ScheduleRequest) (time.Durat
 	default:
 		return time.Second * 30, nil
 	}
+}
+
+func (s Server) getCollection(path string) (*firestore.CollectionRef) {
+	store, err := s.fireApp.Firestore(context.Background())
+	if err != nil {
+		panic(err)
+	}
+	return store.Collection(path)
+}
+
+func (s Server) createSchedule(schedule requests.Schedule) (*firestore.WriteResult, error) {
+	collRef := s.getScheduleCollection()
+	docRef := collRef.NewDoc()
+	return docRef.Create(context.Background(), schedule)
+}
+
+func (s Server) getScheduleCollection() *firestore.CollectionRef {
+	return s.getCollection("schedules")
+}
+
+func (s Server) getRequestCollection() *firestore.CollectionRef {
+	return s.getCollection("requests")
 }

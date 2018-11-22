@@ -24,7 +24,8 @@ type Request struct {
 }
 
 type RequestResponse struct {
-	Id        string
+	Id          string
+	ScheduleId  string
 	Message     string
 	ErrString   string
 	Duration    int
@@ -39,6 +40,10 @@ type ScheduleRequest struct {
 	RequestCount  int               `json:"requestCount"`
 	IntervalCount int               `json:"intervalCount"`
 	IntervalType  string            `json:"intervalType"`
+}
+
+type CreateScheduleResponse struct {
+	ScheduleId string `json:"schedule_id"`
 }
 
 func NewGetRequest(

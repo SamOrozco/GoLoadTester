@@ -4,8 +4,14 @@ import (
 	"time"
 )
 
-type Schedule interface {
-	Run()
+type Schedule struct {
+	Id              string
+	Name            string
+	StartTime       time.Time
+	EndTime         time.Time
+	RequestCount    int
+	AverageDuration int
+	ErrorCount      int
 }
 
 type RequestSchedule struct {

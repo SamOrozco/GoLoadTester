@@ -23,6 +23,8 @@ import 'package:load_tester_frotend/src/components/add_request/add_request.dart'
     MaterialToggleComponent,
     MaterialListComponent,
     MaterialListItemComponent,
+    MaterialButtonComponent,
+    MaterialIconComponent,
     NgIf
   ],
   providers: [
