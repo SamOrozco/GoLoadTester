@@ -14,6 +14,7 @@ import 'package:load_tester_frotend/src/services/services.dart';
     RequestUrlComponent,
     AddStringPairsComponent,
     ConfigureScheduleComponent,
+    MaterialInputComponent,
   ],
   templateUrl: 'add_request.html',
   styleUrls: const [

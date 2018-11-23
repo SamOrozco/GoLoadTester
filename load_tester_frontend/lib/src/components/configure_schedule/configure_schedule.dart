@@ -26,6 +26,7 @@ class ConfigureScheduleComponent {
 
   String requestCountString;
   String timeIntervalString;
+  String scheduleName;
 
   int get requestCount => int.tryParse(requestCountString);
 
