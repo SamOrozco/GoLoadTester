@@ -1,11 +1,21 @@
 <h2>Configure Test Schedule</h2>
 <div>
     <div class="config_item">
-        <material-input label="Request Count" [(ngModel)]="requestCountString" floatingLabel>
+        <material-input label="Request Count"
+                        [(ngModel)]="requestCountString"
+                        floatingLabel
+                        hintText="This is the total number of requests you want to run."
+                        showHintOnlyOnFocus
+        >
         </material-input>
     </div>
     <div class="config_item">
-        <material-input label="Request Interval" [(ngModel)]="timeIntervalString" floatingLabel>
+        <material-input label="Request Interval"
+                        [(ngModel)]="timeIntervalString"
+                        floatingLabel
+                        hintText="This is how often do you want your request to run."
+                        showHintOnlyOnFocus
+        >
         </material-input>
         <material-dropdown-select
                 id="request_dropdown"
@@ -15,7 +25,12 @@
         </material-dropdown-select>
     </div>
     <div class="config_item">
-        <material-input label="Schedule Name" [(ngModel)]="scheduleName" floatingLabel>
+        <material-input label="Schedule Name"
+                        [(ngModel)]="scheduleName"
+                        floatingLabel
+                        hintText="If you don't choose a name we will choose one for you."
+                        showHintOnlyOnFocus
+        >
         </material-input>
     </div>
 </div>

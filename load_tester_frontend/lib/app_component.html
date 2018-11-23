@@ -1,44 +1,8 @@
-<material-drawer persistent
-                 #drawer="drawer"
-                 [(visible)]="drawerVisible">
-    <material-list *deferredContent>
-        <div group class="mat-drawer-spacer"></div>
-        <div group>
-            <!-- MENU ITEMS-->
-            <material-list-item>
-                <material-icon icon="add"></material-icon>
-                Add Request
-            </material-list-item>
-        </div>
-    </material-list>
-</material-drawer>
-
-<!-- CONTENT -->
 <div class="material-content">
-    <header class="material-header shadow" id="nav_header">
-        <div class="material-header-row">
-            <material-button icon
-                             class="material-drawer-button" (trigger)="drawerVisible = !drawerVisible">
-                <material-icon icon="menu"></material-icon>
-            </material-button>
-            <span class="material-header-title">Online load tester</span>
-            <div class="material-spacer"></div>
-            <!-- MENU NAVIGATION-->
-            <nav class="material-navigation">
-                <material-button icon>
-                    <material-icon icon="email">
-                    </material-icon>
-                </material-button>
-            </nav>
-        </div>
-    </header>
-
+    <header></header>
     <section>
-        <div id="content_container" class="mdc-card mdc-card--outlined">
-            <!-- CONTENT -->
-            <div *ngIf="pageNum == 0">
-                <add-request></add-request>
-            </div>
+        <div>
+        <router-outlet [routes]="Routes.all"></router-outlet>
         </div>
     </section>
 </div>

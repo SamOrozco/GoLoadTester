@@ -15,6 +15,8 @@ import 'package:load_tester_frotend/src/services/services.dart';
     AddStringPairsComponent,
     ConfigureScheduleComponent,
     MaterialInputComponent,
+    MaterialSpinnerComponent,
+    NgIf,
   ],
   templateUrl: 'add_request.html',
   styleUrls: const [
@@ -27,6 +29,7 @@ class AddRequest {
   AddStringPairsComponent queryParams;
   ConfigureScheduleComponent configureScheduleComponent;
   final RequestBloc bloc;
+  bool loading = false;
 
   AddRequest(RequestService requestService)
       : bloc = new RequestBloc(requestService);
@@ -53,8 +56,11 @@ class AddRequest {
     this.configureScheduleComponent = comp;
   }
 
-  void submitRequest() {
-    this.bloc.createScheduleRequest(getRequestFromForm());
+  Future submitRequest() async {
+    this.loading = true;
+    var response = await this.bloc.createScheduleRequest(getRequestFromForm());
+    print(response.scheduleId);
+    this.loading = false;
   }
 
   ScheduleRequest getRequestFromForm() {

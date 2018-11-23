@@ -1,7 +1,10 @@
 #request_dropdown {
     margin-right: 4px;
     font-size: 24px;
+    padding: 4px 4px 4px 0px;
+    font-weight: bold;
 }
+
 #url_input {
     width: 80%;
     font-size: 24px;

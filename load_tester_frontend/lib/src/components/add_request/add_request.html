@@ -4,8 +4,14 @@
         <add-string-pairs id="add_headers" #add_headers></add-string-pairs>
         <add-string-pairs id="add_query_params" #add_query_params></add-string-pairs>
         <configure-schedule id="configure_schedule" #configure_schedule></configure-schedule>
-        <material-button raised id="submit_button" (trigger)="submitRequest()">
+        <material-button
+                raised
+                id="submit_button"
+                (trigger)="submitRequest()"
+                *ngIf="!loading">
             Submit
         </material-button>
+        <material-spinner *ngIf="loading">
+        </material-spinner>
     </form>
 </div>

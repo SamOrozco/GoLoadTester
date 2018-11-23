@@ -8,11 +8,10 @@ class RequestService {
 
   RequestService(this._http, this._environment);
 
-  void createRequest(ScheduleRequest request) async {
+  Future<ScheduleIdResponse> createRequest(ScheduleRequest request) async {
     var body = jsonEncode(request.toJson());
-    print(body);
     var resp = await _http.post("https://connector1.ngrok.io/schedule/request",
         headers: {"Content-type": "application/json"}, body: body);
-    print(resp.body);
+    return ScheduleIdResponse.fromJson(jsonDecode(resp.body));
   }
 }

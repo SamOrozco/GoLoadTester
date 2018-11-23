@@ -1,4 +1,5 @@
 import 'package:angular/angular.dart';
+import 'package:angular_router/angular_router.dart';
 import 'package:http/browser_client.dart';
 import 'package:load_tester_frotend/src/services/services.dart';
 import 'package:load_tester_frotend/src/models/models.dart';
@@ -13,6 +14,7 @@ RequestService requestServiceFactory() => _requestService;
 
 @GenerateInjector(
   const [
+    routerProvidersHash,
     const FactoryProvider(RequestService, requestServiceFactory),
   ], // You can use routerProviders in production
 )

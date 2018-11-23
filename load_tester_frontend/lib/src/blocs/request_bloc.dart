@@ -6,7 +6,8 @@ class RequestBloc {
 
   RequestBloc(this.requestService);
 
-  void createScheduleRequest(ScheduleRequest request) {
-    this.requestService.createRequest(request);
+  Future<ScheduleIdResponse> createScheduleRequest(
+      ScheduleRequest request) async {
+    return await this.requestService.createRequest(request);
   }
 }
