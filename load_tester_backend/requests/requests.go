@@ -60,7 +60,6 @@ func NewGetRequest(
 }
 
 func (r Request) Run() (string, int, error) {
-	println("Running")
 	r.StartTime = time.Now()
 
 	// building request
