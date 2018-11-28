@@ -40,6 +40,7 @@ type ScheduleRequest struct {
 	RequestCount  int               `json:"requestCount"`
 	IntervalCount int               `json:"intervalCount"`
 	IntervalType  string            `json:"intervalType"`
+	Block         bool              `json:"block"`
 }
 
 type CreateScheduleResponse struct {
@@ -60,7 +61,6 @@ func NewGetRequest(
 }
 
 func (r Request) Run() (string, int, error) {
-	println("Running")
 	r.StartTime = time.Now()
 
 	// building request

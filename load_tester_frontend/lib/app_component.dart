@@ -12,6 +12,7 @@ import 'package:load_tester_frotend/src/routes.dart';
   selector: 'my-app',
   styleUrls: [
     'app_component.css',
+    'package:angular_components/css/mdc_web/card/mdc-card.scss.css',
   ],
   templateUrl: 'app_component.html',
   directives: [
@@ -37,10 +38,11 @@ import 'package:load_tester_frotend/src/routes.dart';
   exports: [Routes, RoutePaths],
 )
 class AppComponent {
+  final Router _router;
   int pageNum;
   bool drawerVisible;
 
-  AppComponent() {
+  AppComponent(this._router) {
     pageNum = 0;
     drawerVisible = false;
   }

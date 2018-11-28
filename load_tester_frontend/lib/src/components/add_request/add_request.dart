@@ -1,11 +1,15 @@
 import 'package:angular/angular.dart';
 import 'dart:convert';
 import 'package:angular_components/angular_components.dart';
+import 'package:angular_router/angular_router.dart';
 import 'package:load_tester_frotend/src/blocs/request_bloc.dart';
+import 'package:load_tester_frotend/src/components/request_url/request_url.dart'
+    as url;
 import 'package:load_tester_frotend/src/components/components.dart';
 import 'package:load_tester_frotend/src/components/configure_schedule/configure_schedule.dart';
 import 'package:load_tester_frotend/src/models/models.dart';
 import 'package:load_tester_frotend/src/services/services.dart';
+import 'package:load_tester_frotend/src/route_paths.dart';
 
 @Component(
   selector: 'add-request',
@@ -16,6 +20,7 @@ import 'package:load_tester_frotend/src/services/services.dart';
     ConfigureScheduleComponent,
     MaterialInputComponent,
     MaterialSpinnerComponent,
+    HeaderComponent,
     NgIf,
   ],
   templateUrl: 'add_request.html',
@@ -24,18 +29,19 @@ import 'package:load_tester_frotend/src/services/services.dart';
   ],
 )
 class AddRequest {
-  RequestUrlComponent requestUrlComponent;
+  url.RequestUrlComponent requestUrlComponent;
   AddStringPairsComponent headerComponent;
   AddStringPairsComponent queryParams;
   ConfigureScheduleComponent configureScheduleComponent;
   final RequestBloc bloc;
+  final Router _router;
   bool loading = false;
 
-  AddRequest(RequestService requestService)
+  AddRequest(RequestService requestService, this._router)
       : bloc = new RequestBloc(requestService);
 
   @ViewChild('request_url')
-  void set RequestUrlComponent(RequestUrlComponent comp) {
+  void set RequestUrlComponent(url.RequestUrlComponent comp) {
     this.requestUrlComponent = comp;
   }
 

@@ -12,6 +12,8 @@ type Schedule struct {
 	RequestCount    int
 	AverageDuration int
 	ErrorCount      int
+	ShortestRequest int
+	LongestRequest  int
 }
 
 type RequestSchedule struct {
@@ -37,19 +39,35 @@ func NewSchedule(
 }
 
 // We are going to run our request `count` amount of times on the
-// `interval` using `maxConcurrent` amount of go routines
-// this method returns a channel where it will write 1 and only 1 message slice,
-// 1 and only one duration slice, one and only one error slice (hopefully nil)
-func (r RequestSchedule) Run() (chan RequestResponse, chan bool) {
+// `interval` using `maxConcurrent` amount of go routines.
+// This method will run `count` requests and write `count` responses to the `responseChannel`
+// This method can also be terminated if anything is written to the `terminateChannel`
+func (r RequestSchedule) Run(terminateChannel chan bool) (chan RequestResponse, chan bool) {
 	limitChannel := make(chan bool, r.maxConcurrent)
 	responseChannel := make(chan RequestResponse)
 	doneChannel := make(chan bool)
 	responseIndex := 0
+	// this is our terminate bit that our
+	// go requesters will listen to and stop sending requests if terminate = true
+	terminate := false
+	go func() {
+		// if anything is written to this channel
+		// this means you can write true or false to the channel
+		<-terminateChannel
+		terminate = true
+		doneChannel <- true
+
+	}()
+
 	// the `requests` message, duration, and error channel will always be overridden
 	go func() {
 		for i := 0; i < r.count; i++ {
 			limitChannel <- true
 			go func() {
+				if terminate { // we know if terminate was push so was done
+					responseChannel <- RequestResponse{}
+					return
+				}
 				msg, dur, err := r.request.Run()
 				errMsg := ""
 				if err != nil {
@@ -62,7 +80,6 @@ func (r RequestSchedule) Run() (chan RequestResponse, chan bool) {
 					RequestUrl:  r.request.RequestUrl,
 					RequestType: r.request.RequestType,
 				}
-
 				responseChannel <- resp
 				// if we've written the same amount of responses to our channel as we wanted to
 				// or `r.count` we know we are done so write one result to done channel
@@ -71,8 +88,11 @@ func (r RequestSchedule) Run() (chan RequestResponse, chan bool) {
 				} else {
 					responseIndex++
 				}
+
+				// relieve an item from the limit channel
 				<-limitChannel
 			}()
+
 			// this is our limiter
 			// this channel is buffered so it will not block until
 			// you have placed maxConcurrent items without any being removed
@@ -81,6 +101,11 @@ func (r RequestSchedule) Run() (chan RequestResponse, chan bool) {
 			select {
 			case <-time.After(requestDuration):
 				continue
+			}
+
+			// schedule has been terminated
+			if terminate {
+				return
 			}
 		}
 	}()
