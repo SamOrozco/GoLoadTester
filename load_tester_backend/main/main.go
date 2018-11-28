@@ -131,6 +131,8 @@ func (s Server) CreateScheduleRequest(c echo.Context) error {
 		}
 	}()
 
+	// If the user sent `block = true` in their request we are
+	// going to wait here else we return an async response and keep working
 	if schedRequest.Block {
 		<-doneChannel
 	}
