@@ -12,6 +12,8 @@ type Schedule struct {
 	RequestCount    int
 	AverageDuration int
 	ErrorCount      int
+	ShortestRequest int
+	LongestRequest  int
 }
 
 type RequestSchedule struct {

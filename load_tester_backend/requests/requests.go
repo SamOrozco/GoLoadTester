@@ -40,6 +40,7 @@ type ScheduleRequest struct {
 	RequestCount  int               `json:"requestCount"`
 	IntervalCount int               `json:"intervalCount"`
 	IntervalType  string            `json:"intervalType"`
+	Block         bool              `json:"block"`
 }
 
 type CreateScheduleResponse struct {
