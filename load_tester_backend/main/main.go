@@ -119,7 +119,7 @@ func (s Server) CreateScheduleRequest(c echo.Context) error {
 	}
 
 	// reading responses in asynchronously.
-	// this go routine will end when doneChannel <- has been called
+	// this go routine will end when <- doneChannel has been called
 	go func() {
 		for {
 			select {
