@@ -66,6 +66,20 @@ class AddRequest {
     this.loading = true;
     var response = await this.bloc.createScheduleRequest(getRequestFromForm());
     print(response.scheduleId);
+    // navigate to ID!!!
+    var res = await this._router.navigateByUrl(RoutePaths.scheduleDetail.toUrl(
+          parameters: {"scheduleId": response.scheduleId},
+        ));
+    if (res == NavigationResult.BLOCKED_BY_GUARD) {
+      print("Blocked by guard");
+    }
+    if (res == NavigationResult.INVALID_ROUTE) {
+      print("Invalid Route");
+    }
+    if (res == NavigationResult.SUCCESS) {
+//      print("Success");
+    }
+    print(res.toString());
     this.loading = false;
   }
 
