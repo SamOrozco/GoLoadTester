@@ -39,9 +39,9 @@ func NewSchedule(
 }
 
 // We are going to run our request `count` amount of times on the
-// `interval` using `maxConcurrent` amount of go routines
-// this method returns a channel where it will write 1 and only 1 message slice,
-// 1 and only one duration slice, one and only one error slice (hopefully nil)
+// `interval` using `maxConcurrent` amount of go routines.
+// This method will run `count` requests and write `count` responses to the `responseChannel`
+// This method can also be terminated if anything is written to the `terminateChannel`
 func (r RequestSchedule) Run(terminateChannel chan bool) (chan RequestResponse, chan bool) {
 	limitChannel := make(chan bool, r.maxConcurrent)
 	responseChannel := make(chan RequestResponse)
