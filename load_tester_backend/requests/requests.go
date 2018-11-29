@@ -24,13 +24,13 @@ type Request struct {
 }
 
 type RequestResponse struct {
-	Id          string
-	ScheduleId  string
-	Message     string
-	ErrString   string
-	Duration    int
-	RequestUrl  string
-	RequestType string
+	Id          string `json:"id" firestore:"id"`
+	ScheduleId  string `json:"schedule_id" firestore:"schedule_id"`
+	ErrString   string `json:"err_string" firestore:"err_string"`
+	Duration    int    `json:"duration" firestore:"duration"`
+	RequestUrl  string `json:"request_url" firestore:"request_url"`
+	RequestType string `json:"request_type" firestore:"request_type"`
+	Message     string `json:"message" firestore:"message"`
 }
 type ScheduleRequest struct {
 	RequestUrl    string            `json:"url"`
