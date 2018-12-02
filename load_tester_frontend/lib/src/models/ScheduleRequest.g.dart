@@ -14,7 +14,8 @@ ScheduleRequest _$ScheduleRequestFromJson(Map<String, dynamic> json) {
       queryParams: Map<String, String>.from(json['queryParams'] as Map),
       requestCount: json['requestCount'] as int,
       intervalCount: json['intervalCount'] as int,
-      intervalType: json['intervalType'] as String);
+      intervalType: json['intervalType'] as String,
+      name: json['name'] as String);
 }
 
 Map<String, dynamic> _$ScheduleRequestToJson(ScheduleRequest instance) =>
@@ -25,5 +26,6 @@ Map<String, dynamic> _$ScheduleRequestToJson(ScheduleRequest instance) =>
       'queryParams': instance.queryParams,
       'requestCount': instance.requestCount,
       'intervalCount': instance.intervalCount,
-      'intervalType': instance.intervalType
+      'intervalType': instance.intervalType,
+      'name': instance.name
     };

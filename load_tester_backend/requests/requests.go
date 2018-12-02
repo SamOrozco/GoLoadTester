@@ -33,14 +33,15 @@ type RequestResponse struct {
 	Message     string `json:"message" firestore:"message"`
 }
 type ScheduleRequest struct {
-	RequestUrl    string            `json:"url"`
-	RequestType   string            `json:"requestType"`
-	Headers       map[string]string `json:"headers"`
-	QueryParams   map[string]string `json:"queryParams"`
-	RequestCount  int               `json:"requestCount"`
-	IntervalCount int               `json:"intervalCount"`
-	IntervalType  string            `json:"intervalType"`
-	Block         bool              `json:"block"`
+	RequestUrl    string            `json:"url" firestore:"request_url"`
+	RequestType   string            `json:"requestType" firestore:"request_type"`
+	Headers       map[string]string `json:"headers" firestore:"headers"`
+	QueryParams   map[string]string `json:"queryParams" firestore:"query_params"`
+	RequestCount  int               `json:"requestCount" firestore:"request_count"`
+	IntervalCount int               `json:"intervalCount" firestore:"interval_count"`
+	IntervalType  string            `json:"intervalType" firestore:"interval_type"`
+	Block         bool              `json:"block" firestore:"block"`
+	Name          string            `json:"name" firestore:"name"`
 }
 
 type CreateScheduleResponse struct {

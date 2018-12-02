@@ -12,6 +12,7 @@ class ScheduleRequest {
   final int requestCount;
   final int intervalCount;
   final String intervalType;
+  final String name;
 
   ScheduleRequest({
     this.url,
@@ -21,6 +22,7 @@ class ScheduleRequest {
     this.requestCount,
     this.intervalCount,
     this.intervalType,
+    this.name,
   });
 
   factory ScheduleRequest.fromJson(Map<String, dynamic> json) =>

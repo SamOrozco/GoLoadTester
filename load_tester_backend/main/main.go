@@ -98,7 +98,7 @@ func (s Server) CreateScheduleRequest(c echo.Context) error {
 		schedRequest.RequestCount,
 		request,
 		MAX_CONCURRENT)
-	// firebase schedule record
+	// fire base schedule record
 	uid, _ := uuid.NewUUID()
 	// we have our schedule uuid
 	schedId := uid.String()
@@ -108,12 +108,12 @@ func (s Server) CreateScheduleRequest(c echo.Context) error {
 	respChannel, doneChannel := schedule.Run(s.stopScheduleMap[schedId])
 	fbSchedule := requests.Schedule{
 		Id:           schedId,
-		Name:         schedId,
+		Name:         schedRequest.Name,
 		StartTime:    time.Now(),
 		RequestCount: schedRequest.RequestCount,
 	}
 
-	_, err = s.createSchedule(fbSchedule)
+	refId, err := s.createSchedule(fbSchedule)
 	if err != nil {
 		panic(err)
 	}
@@ -124,7 +124,7 @@ func (s Server) CreateScheduleRequest(c echo.Context) error {
 		for {
 			select {
 			case resp := <-respChannel:
-				s.createRequestResponse(resp, schedId)
+				s.createRequestResponse(resp, refId)
 			case _ = <-doneChannel:
 				return
 			}
@@ -137,7 +137,7 @@ func (s Server) CreateScheduleRequest(c echo.Context) error {
 		<-doneChannel
 	}
 	response := &requests.CreateScheduleResponse{
-		ScheduleId: schedId,
+		ScheduleId: refId,
 	}
 	return c.JSON(http.StatusOK, response)
 }
@@ -165,10 +165,18 @@ func (s Server) getCollection(path string) (*firestore.CollectionRef) {
 	return store.Collection(path)
 }
 
-func (s Server) createSchedule(schedule requests.Schedule) (*firestore.WriteResult, error) {
+func (s Server) createSchedule(schedule requests.Schedule) (string, error) {
 	collRef := s.getScheduleCollection()
 	docRef := collRef.NewDoc()
-	return docRef.Create(context.Background(), schedule)
+	_, err := docRef.Create(context.Background(), schedule)
+	if err != nil {
+		return "", err
+	}
+	_, err = docRef.Set(context.Background(), map[string]string{"id": docRef.ID}, firestore.MergeAll)
+	if err != nil {
+		return "", err
+	}
+	return docRef.ID, err
 }
 
 func (s Server) getScheduleCollection() *firestore.CollectionRef {

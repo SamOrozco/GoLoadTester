@@ -1,1 +1,9 @@
-<div>here</div>
+<div class="header_container">
+    <div>
+        <span>{{schedule.name}}</span>
+    </div>
+</div>
+
+<div *ngFor="let res of responses">
+    <request-response [request]="res"></request-response>
+</div>

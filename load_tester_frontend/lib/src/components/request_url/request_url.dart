@@ -36,4 +36,6 @@ class RequestUrlComponent {
   String get selectedRequestType => selectedValue.selectedValues.take(1).first;
 
   String get url => this.materialInputComp?.inputText;
+
+  void set url(String url) => this.materialInputComp?.inputText = url;
 }

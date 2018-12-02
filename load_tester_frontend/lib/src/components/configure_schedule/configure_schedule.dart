@@ -30,7 +30,11 @@ class ConfigureScheduleComponent {
 
   int get requestCount => int.tryParse(requestCountString);
 
+  void set requestCount(int cnt) => requestCountString = cnt.toString();
+
   int get timeInterval => int.tryParse(timeIntervalString);
+
+  void set timeInterval(int cnt) => timeIntervalString = cnt.toString();
 
   ConfigureScheduleComponent();
 
