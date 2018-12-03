@@ -9,9 +9,9 @@ class Schedule {
   @JsonKey(name: "name")
   String name;
   @JsonKey(name: "start_time")
-  DateTime startTime;
+  int startTime;
   @JsonKey(name: "end_time")
-  DateTime endTime;
+  int endTime;
   @JsonKey(name: "request_count")
   int requestCount;
   @JsonKey(name: "average_duration")

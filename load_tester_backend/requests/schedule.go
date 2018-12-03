@@ -5,15 +5,15 @@ import (
 )
 
 type Schedule struct {
-	Id              string    `json:"id" firestore:"id"`
-	Name            string    `json:"name" firestore:"name"`
-	StartTime       time.Time `json:"start_time" firestore:"start_time"`
-	EndTime         time.Time `json:"end_time" firestore:"end_time"`
-	RequestCount    int       `json:"request_count" firestore:"request_count"`
-	AverageDuration int       `json:"average_duration" firestore:"average_duration"`
-	ErrorCount      int       `json:"error_count" firestore:"error_count"`
-	ShortestRequest int       `json:"shortest_request" firestore:"shortest_request"`
-	LongestRequest  int       `json:"longest_request" firestore:"longest_request"`
+	Id              string `json:"id" firestore:"id"`
+	Name            string `json:"name" firestore:"name"`
+	StartTime       int64  `json:"start_time" firestore:"start_time"`
+	EndTime         int64  `json:"end_time" firestore:"end_time"`
+	RequestCount    int    `json:"request_count" firestore:"request_count"`
+	AverageDuration int    `json:"average_duration" firestore:"average_duration"`
+	ErrorCount      int    `json:"error_count" firestore:"error_count"`
+	ShortestRequest int    `json:"shortest_request" firestore:"shortest_request"`
+	LongestRequest  int    `json:"longest_request" firestore:"longest_request"`
 }
 
 type RequestSchedule struct {

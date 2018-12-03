@@ -62,7 +62,7 @@ class AddRequest {
   void set configureSchedule(ConfigureScheduleComponent comp) {
     this.configureScheduleComponent = comp;
     this.configureScheduleComponent.timeInterval = 300;
-    this.configureScheduleComponent.requestCount = 20;
+    this.configureScheduleComponent.requestCount = 3;
   }
 
   Future submitRequest() async {

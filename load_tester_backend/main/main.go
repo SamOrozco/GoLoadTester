@@ -106,10 +106,17 @@ func (s Server) CreateScheduleRequest(c echo.Context) error {
 	// Done channel will send when all responses have been written
 	// response channel is the channel all the responses will be written to
 	respChannel, doneChannel := schedule.Run(s.stopScheduleMap[schedId])
+
+	// if name is null we are just going to set to the schedId
+	schedName := schedRequest.Name
+	if len(schedName) < 1 {
+		schedName = schedId
+	}
+
 	fbSchedule := requests.Schedule{
 		Id:           schedId,
-		Name:         schedRequest.Name,
-		StartTime:    time.Now(),
+		Name:         schedName,
+		StartTime:    time.Now().Unix(),
 		RequestCount: schedRequest.RequestCount,
 	}
 
