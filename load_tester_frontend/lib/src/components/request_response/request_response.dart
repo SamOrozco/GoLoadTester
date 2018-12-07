@@ -8,6 +8,8 @@ import 'package:load_tester_frotend/src/models/models.dart';
   directives: const [
     MaterialInputComponent,
     ShowCodeComponent,
+    NgModel,
+    coreDirectives,
   ],
   templateUrl: 'request_response.html',
   styleUrls: const [

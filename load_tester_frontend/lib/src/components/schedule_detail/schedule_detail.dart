@@ -14,10 +14,13 @@ import 'package:load_tester_frotend/src/models/models.dart';
     NgModel,
     NgFor,
     RequestResponseComponent,
+    MaterialIconComponent,
+    coreDirectives,
   ],
   templateUrl: 'schedule_detail.html',
   styleUrls: const [
     'schedule_detail.css',
+    'package:angular_components/css/mdc_web/card/mdc-card.scss.css',
   ],
 )
 class ScheduleDetailComponent implements OnActivate {

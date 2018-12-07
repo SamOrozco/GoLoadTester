@@ -1,7 +1,16 @@
-<div>
+<div class="actions row">
+    <material-button class="copy_button"
+                     raised
+                     (trigger)="copyMessage()">Copy
+        <material-icon class="copy_icon" icon="file_copy"></material-icon>
+    </material-button>
+</div>
+<div class="small_code">
     <pre>
         <code>
-        {{text}}
+            {{text}}
         </code>
     </pre>
 </div>
+
+<md-toast id="showToast" #showToast></md-toast>

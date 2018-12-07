@@ -1,0 +1,41 @@
+.row {
+  display: flex;
+  align-content: flex-start;
+}
+
+.summary_container {
+  width: 100%;
+  background: #4b830d;
+  color: #f5f5f5;
+}
+
+.summary_container h1 {
+  margin-top: 0;
+  padding: 8px;
+}
+
+.value_card {
+  font-size: 16px;
+  padding: 8px;
+  border-bottom: 1px solid #fff;
+  margin-bottom: 2px;
+}
+
+.value_card .title {
+  font-weight: bold;
+  padding: 1px;
+}
+
+.value_card .value {
+  background-color: #ff7f24;
+  border-radius: 6px;
+}
+
+.response_container {
+  overflow: auto;
+}
+
+.responses_title {
+  color: #ff7f24;
+  padding: 8px;
+}
