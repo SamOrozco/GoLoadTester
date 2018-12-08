@@ -29,6 +29,7 @@
 .value_card .value {
   background-color: #ff7f24;
   border-radius: 6px;
+  padding: 1px;
 }
 
 .response_container {

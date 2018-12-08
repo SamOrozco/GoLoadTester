@@ -25,9 +25,7 @@ class ShowCodeComponent {
 
   void copyMessage() async {
     _copyToClipboard(this.text);
-    toastElement.duration = new Duration(milliseconds: 500);
-    toastElement.color = "ff7f24";
-    toastElement.animateTime = new Duration(milliseconds: 500);
+    toastElement.color = "#ff7f24";
     toastElement.showToast("Copied");
   }
 

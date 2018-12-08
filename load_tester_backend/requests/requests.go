@@ -93,7 +93,7 @@ func (r Request) Run() (string, int, error) {
 		return "", 0, errors.New(fmt.Sprintf("Status code not 200, status code: %s", resp.StatusCode))
 	}
 
-	duration := int(time.Since(r.StartTime).Nanoseconds())
+	duration := int(time.Since(r.StartTime).Nanoseconds() / 1000000)
 	bodyString, err := readBody(resp.Body)
 	if err != nil {
 		return "", 0, err

@@ -3,11 +3,11 @@
     <div class="row">
         <div class="value_card">
             <span class="title">Start Time</span>
-            <span class="value">{{schedule.startTime}}</span>
+            <span class="value">{{schedule.startTimeString}}</span>
         </div>
         <div class="value_card">
             <span class="title">End Time</span>
-            <span class="value">{{schedule.endTime}}</span>
+            <span class="value">{{schedule.endTimeString}}</span>
         </div>
     </div>
     <div class="row">
@@ -16,18 +16,22 @@
             <span class="value">{{schedule.requestCount}}</span>
         </div>
         <div class="value_card">
-            <span class="title">Average Duration</span>
-            <span class="value">{{schedule.averageDuration}}</span>
+            <span class="title">Current Request Count</span>
+            <span class="value">{{schedule.currentRequestCount}}</span>
         </div>
     </div>
     <div class="row">
         <div class="value_card">
+            <span class="title">Average Duration</span>
+            <span class="value">{{schedule.averageDurationString}}</span>
+        </div>
+        <div class="value_card">
             <span class="title">Longest Request Duration</span>
-            <span class="value">{{schedule.longestRequest}}</span>
+            <span class="value">{{schedule.longestDuration}}</span>
         </div>
         <div class="value_card">
             <span class="title">Shortest Request Duration</span>
-            <span class="value">{{schedule.shortestRequest}}</span>
+            <span class="value">{{schedule.shortestDuration}}</span>
         </div>
     </div>
 </div>

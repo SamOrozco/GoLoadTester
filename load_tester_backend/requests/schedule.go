@@ -1,6 +1,7 @@
 package requests
 
 import (
+	"sync/atomic"
 	"time"
 )
 
@@ -46,7 +47,7 @@ func (r RequestSchedule) Run(terminateChannel chan bool) (chan RequestResponse, 
 	limitChannel := make(chan bool, r.maxConcurrent)
 	responseChannel := make(chan RequestResponse)
 	doneChannel := make(chan bool)
-	responseIndex := 0
+	responseIndex := int32(0)
 	// this is our terminate bit that our
 	// go requesters will listen to and stop sending requests if terminate = true
 	terminate := false
@@ -80,13 +81,14 @@ func (r RequestSchedule) Run(terminateChannel chan bool) (chan RequestResponse, 
 					RequestUrl:  r.request.RequestUrl,
 					RequestType: r.request.RequestType,
 				}
+
 				responseChannel <- resp
 				// if we've written the same amount of responses to our channel as we wanted to
 				// or `r.count` we know we are done so write one result to done channel
-				if responseIndex == (r.count - 1) {
+				if responseIndex == int32(r.count-1) {
 					doneChannel <- true
 				} else {
-					responseIndex++
+					atomic.AddInt32(&responseIndex, 1)
 				}
 
 				// relieve an item from the limit channel

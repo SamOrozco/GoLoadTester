@@ -8,9 +8,13 @@ import (
 	"github.com/google/uuid"
 	"github.com/labstack/echo"
 	"github.com/labstack/echo/middleware"
+	context2 "golang.org/x/net/context"
 	"google.golang.org/api/option"
+	"load_tester/load_tester_backend/pulse"
 	"load_tester/load_tester_backend/requests"
+	"math"
 	"net/http"
+	"sync/atomic"
 	"time"
 )
 
@@ -48,7 +52,7 @@ func (s Server) Run() {
 	e := echo.New()
 	e.Use(middleware.Logger())
 	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
-		AllowOrigins: []string{"http://localhost:8080"},
+		AllowOrigins: []string{"http://localhost:8080", "http://connector2.ngrok.io"},
 		AllowMethods: []string{http.MethodGet, http.MethodPut, http.MethodPost, http.MethodDelete},
 	}))
 	e.POST("schedule/request", s.CreateScheduleRequest)
@@ -75,6 +79,7 @@ func (s Server) StopRunningSchedule(c echo.Context) error {
 // it will then write it's results to firebase
 func (s Server) CreateScheduleRequest(c echo.Context) error {
 	// todo validate inputs
+	context := context2.Background()
 	schedRequest := &requests.ScheduleRequest{}
 	err := c.Bind(schedRequest)
 	if err != nil {
@@ -106,6 +111,7 @@ func (s Server) CreateScheduleRequest(c echo.Context) error {
 	// Done channel will send when all responses have been written
 	// response channel is the channel all the responses will be written to
 	respChannel, doneChannel := schedule.Run(s.stopScheduleMap[schedId])
+	donePulse := pulse.NewPulse(doneChannel)
 
 	// if name is null we are just going to set to the schedId
 	schedName := schedRequest.Name
@@ -127,21 +133,68 @@ func (s Server) CreateScheduleRequest(c echo.Context) error {
 
 	// reading responses in asynchronously.
 	// this go routine will end when <- doneChannel has been called
+	doneSignal := donePulse.Subscribe()
+
+	// REPORTING VARIABLES
+	totalDuration := int32(0)
+	sentRequestCount := int32(0)
+	longestDuration := int32(0)
+	shortestDuration := int32(math.MaxInt32)
 	go func() {
 		for {
 			select {
 			case resp := <-respChannel:
 				s.createRequestResponse(resp, refId)
-			case _ = <-doneChannel:
+				// add to total
+				atomic.AddInt32(&totalDuration, int32(resp.Duration))
+				// add to sent
+				atomic.AddInt32(&sentRequestCount, int32(1))
+				// update sent
+				s.updateSentRequestCount(s.getSchedule(refId), sentRequestCount)
+				// update average
+				s.updateAverageDuration(s.getSchedule(refId), totalDuration/sentRequestCount)
+				// new longest dur
+				if resp.Duration > int(longestDuration) { // new longest dur
+					atomic.StoreInt32(&longestDuration, int32(resp.Duration))
+					// update firebase
+					s.updateLongestDuration(s.getSchedule(refId), longestDuration)
+				}
+				// new shortest dur
+				if resp.Duration < int(shortestDuration) {
+					atomic.StoreInt32(&shortestDuration, int32(resp.Duration))
+					// update firebase
+					s.updateShortestDuration(s.getSchedule(refId), shortestDuration)
+				}
+			case _ = <-doneSignal:
 				return
 			}
+		}
+	}()
+
+	// this will block until the done chan channel is written to
+	waitOnSchedule := make(chan bool)
+	doneSignal1 := donePulse.Subscribe()
+	go func() {
+		// THIS IS WHERE WE CAN DO THINGS ON SCHEDULE COMPLETION
+		<-doneSignal1
+		waitOnSchedule <- true
+
+		// UPDATING SCHEDULE WITH FINAL DATA
+		scheduleDoc := s.getSchedule(refId)
+		_, err := scheduleDoc.Set(context, map[string]int64{"end_time": time.Now().Unix()}, firestore.MergeAll)
+		if err != nil {
+			panic(err)
 		}
 	}()
 
 	// If the user sent `block = true` in their request we are
 	// going to wait here else we return an async response and keep working
 	if schedRequest.Block {
-		<-doneChannel
+		<-waitOnSchedule
+	} else {
+		go func() {
+			<-waitOnSchedule
+		}()
 	}
 	response := &requests.CreateScheduleResponse{
 		ScheduleId: refId,
@@ -190,6 +243,10 @@ func (s Server) getScheduleCollection() *firestore.CollectionRef {
 	return s.getCollection("schedules")
 }
 
+func (s Server) getSchedule(scheduleId string) (*firestore.DocumentRef) {
+	return s.getScheduleCollection().Doc(scheduleId)
+}
+
 func (s Server) getRequestCollection() *firestore.CollectionRef {
 	return s.getCollection("requests")
 }
@@ -209,4 +266,33 @@ func (s Server) createRequestResponse(resp requests.RequestResponse, scheduleId 
 	resp.ScheduleId = scheduleId
 	_, err := docRef.Create(ctx, resp)
 	return err
+}
+
+func (s Server) updateSentRequestCount(docRef *firestore.DocumentRef, count int32) {
+	_, err := docRef.Set(context.Background(), map[string]int32{"current_request_count": count}, firestore.MergeAll)
+	if err != nil {
+		panic(err)
+	}
+}
+
+func (s Server) updateAverageDuration(docRef *firestore.DocumentRef, duration int32) {
+	_, err := docRef.Set(context.Background(), map[string]int32{"average_duration": duration}, firestore.MergeAll)
+	if err != nil {
+		panic(err)
+	}
+}
+
+func (s Server) updateLongestDuration(docRef *firestore.DocumentRef, duration int32) {
+	_, err := docRef.Set(context.Background(), map[string]int32{"longest_duration": duration}, firestore.MergeAll)
+	if err != nil {
+		panic(err)
+	}
+}
+
+
+func (s Server) updateShortestDuration(docRef *firestore.DocumentRef, duration int32) {
+	_, err := docRef.Set(context.Background(), map[string]int32{"shortest_duration": duration}, firestore.MergeAll)
+	if err != nil {
+		panic(err)
+	}
 }
