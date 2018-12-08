@@ -124,6 +124,7 @@ func (s Server) CreateScheduleRequest(c echo.Context) error {
 		Name:         schedName,
 		StartTime:    time.Now().Unix(),
 		RequestCount: schedRequest.RequestCount,
+		Url:          schedRequest.RequestUrl,
 	}
 
 	refId, err := s.createSchedule(fbSchedule)
@@ -288,7 +289,6 @@ func (s Server) updateLongestDuration(docRef *firestore.DocumentRef, duration in
 		panic(err)
 	}
 }
-
 
 func (s Server) updateShortestDuration(docRef *firestore.DocumentRef, duration int32) {
 	_, err := docRef.Set(context.Background(), map[string]int32{"shortest_duration": duration}, firestore.MergeAll)

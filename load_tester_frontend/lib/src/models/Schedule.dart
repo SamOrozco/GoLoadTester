@@ -23,6 +23,8 @@ class Schedule {
   int longestDuration;
   @JsonKey(name: "current_request_count")
   int currentRequestCount;
+  @JsonKey(name: "url")
+  String url;
 
   String get startTimeString {
     if (startTime == null) {

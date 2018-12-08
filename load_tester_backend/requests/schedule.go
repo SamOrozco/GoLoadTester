@@ -15,6 +15,7 @@ type Schedule struct {
 	ErrorCount      int    `json:"error_count" firestore:"error_count"`
 	ShortestRequest int    `json:"shortest_request" firestore:"shortest_request"`
 	LongestRequest  int    `json:"longest_request" firestore:"longest_request"`
+	Url             string `json:"url" firestore:"url"`
 }
 
 type RequestSchedule struct {
