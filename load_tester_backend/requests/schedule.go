@@ -1,19 +1,20 @@
 package requests
 
 import (
+	"sync/atomic"
 	"time"
 )
 
 type Schedule struct {
-	Id              string
-	Name            string
-	StartTime       time.Time
-	EndTime         time.Time
-	RequestCount    int
-	AverageDuration int
-	ErrorCount      int
-	ShortestRequest int
-	LongestRequest  int
+	Id              string `json:"id" firestore:"id"`
+	Name            string `json:"name" firestore:"name"`
+	StartTime       int64  `json:"start_time" firestore:"start_time"`
+	EndTime         int64  `json:"end_time" firestore:"end_time"`
+	RequestCount    int    `json:"request_count" firestore:"request_count"`
+	AverageDuration int    `json:"average_duration" firestore:"average_duration"`
+	ErrorCount      int    `json:"error_count" firestore:"error_count"`
+	ShortestRequest int    `json:"shortest_request" firestore:"shortest_request"`
+	LongestRequest  int    `json:"longest_request" firestore:"longest_request"`
 }
 
 type RequestSchedule struct {
@@ -46,7 +47,7 @@ func (r RequestSchedule) Run(terminateChannel chan bool) (chan RequestResponse, 
 	limitChannel := make(chan bool, r.maxConcurrent)
 	responseChannel := make(chan RequestResponse)
 	doneChannel := make(chan bool)
-	responseIndex := 0
+	responseIndex := int32(0)
 	// this is our terminate bit that our
 	// go requesters will listen to and stop sending requests if terminate = true
 	terminate := false
@@ -80,13 +81,14 @@ func (r RequestSchedule) Run(terminateChannel chan bool) (chan RequestResponse, 
 					RequestUrl:  r.request.RequestUrl,
 					RequestType: r.request.RequestType,
 				}
+
 				responseChannel <- resp
 				// if we've written the same amount of responses to our channel as we wanted to
 				// or `r.count` we know we are done so write one result to done channel
-				if responseIndex == (r.count - 1) {
+				if responseIndex == int32(r.count-1) {
 					doneChannel <- true
 				} else {
-					responseIndex++
+					atomic.AddInt32(&responseIndex, 1)
 				}
 
 				// relieve an item from the limit channel

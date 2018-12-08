@@ -1,0 +1,29 @@
+.row {
+    display: flex;
+    align-content: flex-start;
+}
+
+.small_code {
+    font-family: monaco, Consolas, "Lucida Console", monospace;
+    background-color: rgba(28, 40, 51, 0.7);
+    line-height: 1.5;
+    color: #f5f5f5;
+    overflow: auto;
+    border-radius: 4px;
+    padding-left: 4px;
+    margin: 1px;
+    max-height: 240px;
+}
+
+.actions {
+    vertical-align: center;
+}
+
+.copy_button {
+    font-size: 12px;
+    margin: 2px;
+    color: #ff7f24;
+}
+
+code {
+}

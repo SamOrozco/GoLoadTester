@@ -43,6 +43,7 @@ class AddRequest {
   @ViewChild('request_url')
   void set RequestUrlComponent(url.RequestUrlComponent comp) {
     this.requestUrlComponent = comp;
+    this.requestUrlComponent.url = "http://facebook.com";
   }
 
   @ViewChild('add_headers')
@@ -60,6 +61,8 @@ class AddRequest {
   @ViewChild('configure_schedule')
   void set configureSchedule(ConfigureScheduleComponent comp) {
     this.configureScheduleComponent = comp;
+    this.configureScheduleComponent.timeInterval = 300;
+    this.configureScheduleComponent.requestCount = 3;
   }
 
   Future submitRequest() async {
@@ -76,9 +79,7 @@ class AddRequest {
     if (res == NavigationResult.INVALID_ROUTE) {
       print("Invalid Route");
     }
-    if (res == NavigationResult.SUCCESS) {
-//      print("Success");
-    }
+    if (res == NavigationResult.SUCCESS) {}
     print(res.toString());
     this.loading = false;
   }
@@ -91,6 +92,7 @@ class AddRequest {
     var requestCount = this.configureScheduleComponent.requestCount;
     var timeInterval = this.configureScheduleComponent.timeInterval;
     var timeType = this.configureScheduleComponent.selectedTimeTypeString;
+    var name = this.configureScheduleComponent.scheduleName;
     return new ScheduleRequest(
         url: url,
         requestType: requestType,
@@ -98,6 +100,7 @@ class AddRequest {
         queryParams: KeyValuePair.getMapFromKeyValues(queryParams),
         requestCount: requestCount,
         intervalCount: timeInterval,
-        intervalType: timeType);
+        intervalType: timeType,
+        name: name);
   }
 }

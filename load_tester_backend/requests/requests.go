@@ -24,23 +24,24 @@ type Request struct {
 }
 
 type RequestResponse struct {
-	Id          string
-	ScheduleId  string
-	Message     string
-	ErrString   string
-	Duration    int
-	RequestUrl  string
-	RequestType string
+	Id          string `json:"id" firestore:"id"`
+	ScheduleId  string `json:"schedule_id" firestore:"schedule_id"`
+	ErrString   string `json:"err_string" firestore:"err_string"`
+	Duration    int    `json:"duration" firestore:"duration"`
+	RequestUrl  string `json:"request_url" firestore:"request_url"`
+	RequestType string `json:"request_type" firestore:"request_type"`
+	Message     string `json:"message" firestore:"message"`
 }
 type ScheduleRequest struct {
-	RequestUrl    string            `json:"url"`
-	RequestType   string            `json:"requestType"`
-	Headers       map[string]string `json:"headers"`
-	QueryParams   map[string]string `json:"queryParams"`
-	RequestCount  int               `json:"requestCount"`
-	IntervalCount int               `json:"intervalCount"`
-	IntervalType  string            `json:"intervalType"`
-	Block         bool              `json:"block"`
+	RequestUrl    string            `json:"url" firestore:"request_url"`
+	RequestType   string            `json:"requestType" firestore:"request_type"`
+	Headers       map[string]string `json:"headers" firestore:"headers"`
+	QueryParams   map[string]string `json:"queryParams" firestore:"query_params"`
+	RequestCount  int               `json:"requestCount" firestore:"request_count"`
+	IntervalCount int               `json:"intervalCount" firestore:"interval_count"`
+	IntervalType  string            `json:"intervalType" firestore:"interval_type"`
+	Block         bool              `json:"block" firestore:"block"`
+	Name          string            `json:"name" firestore:"name"`
 }
 
 type CreateScheduleResponse struct {
@@ -92,7 +93,7 @@ func (r Request) Run() (string, int, error) {
 		return "", 0, errors.New(fmt.Sprintf("Status code not 200, status code: %s", resp.StatusCode))
 	}
 
-	duration := int(time.Since(r.StartTime).Nanoseconds())
+	duration := int(time.Since(r.StartTime).Nanoseconds() / 1000000)
 	bodyString, err := readBody(resp.Body)
 	if err != nil {
 		return "", 0, err

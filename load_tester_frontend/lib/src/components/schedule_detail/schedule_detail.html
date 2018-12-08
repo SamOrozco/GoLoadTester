@@ -1,1 +1,45 @@
-<div>here</div>
+<div class="summary_container">
+    <h1>{{schedule.name}}</h1>
+    <div class="row">
+        <div class="value_card">
+            <span class="title">Start Time</span>
+            <span class="value">{{schedule.startTimeString}}</span>
+        </div>
+        <div class="value_card">
+            <span class="title">End Time</span>
+            <span class="value">{{schedule.endTimeString}}</span>
+        </div>
+    </div>
+    <div class="row">
+        <div class="value_card">
+            <span class="title">Request Count</span>
+            <span class="value">{{schedule.requestCount}}</span>
+        </div>
+        <div class="value_card">
+            <span class="title">Current Request Count</span>
+            <span class="value">{{schedule.currentRequestCount}}</span>
+        </div>
+    </div>
+    <div class="row">
+        <div class="value_card">
+            <span class="title">Average Duration</span>
+            <span class="value">{{schedule.averageDurationString}}</span>
+        </div>
+        <div class="value_card">
+            <span class="title">Longest Request Duration</span>
+            <span class="value">{{schedule.longestDuration}}</span>
+        </div>
+        <div class="value_card">
+            <span class="title">Shortest Request Duration</span>
+            <span class="value">{{schedule.shortestDuration}}</span>
+        </div>
+    </div>
+</div>
+
+
+<div class="response_container">
+    <h2 class="responses_title">Responses</h2>
+    <div *ngFor="let res of responses">
+        <request-response [request]="res"></request-response>
+    </div>
+</div>

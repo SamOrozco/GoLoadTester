@@ -1,8 +1,12 @@
-#submit_button{
+:host {
+    padding: 24px;
+}
+
+#submit_button {
     align-items: flex-end;
 }
 
-#submit_button{
+#submit_button {
     background-color: #4b830d;
     color: #fff;
 }
