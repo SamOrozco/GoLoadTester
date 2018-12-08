@@ -13,9 +13,11 @@ import 'package:load_tester_frotend/src/models/models.dart';
     OnInit,
     NgModel,
     NgFor,
+    NgIf,
     RequestResponseComponent,
     MaterialIconComponent,
     coreDirectives,
+    LoadingComponent,
   ],
   templateUrl: 'schedule_detail.html',
   styleUrls: const [
@@ -32,14 +34,18 @@ class ScheduleDetailComponent implements OnActivate {
   Schedule schedule = new Schedule();
   List<RequestResponse> responses = new List<RequestResponse>();
 
+  // loading varaibles to help with the chopiness
+  bool schedLoaded = false;
+  bool reqLoaded = false;
+
   ScheduleDetailComponent(this._router, this._store);
 
   void handleScheduleSnapShots() async {
     var snap = await _scheduleDoc.get();
     _scheduleDoc.onSnapshot.listen((data) {
       if (data.exists) {
-        print(data.data());
         this.schedule = Schedule.fromJson(data.data());
+        this.schedLoaded = true;
       }
     });
   }
@@ -49,6 +55,7 @@ class ScheduleDetailComponent implements OnActivate {
       for (var doc in data.docChanges()) {
         RequestResponse resp = RequestResponse.fromJson(doc.doc.data());
         this.responses.add(resp);
+        this.reqLoaded = true;
       }
     });
   }
@@ -56,6 +63,8 @@ class ScheduleDetailComponent implements OnActivate {
   @override
   // on activate we want to get the schedId from the path param
   void onActivate(_, RouterState current) async {
+    this.schedLoaded = false;
+    this.reqLoaded = false;
     String schedId = _getScheduleIdFromUrl(current.toUrl());
     this._scheduleId = schedId;
     print(this._scheduleId);

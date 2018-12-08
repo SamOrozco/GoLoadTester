@@ -1,4 +1,5 @@
-<div class="summary_container">
+<loading *ngIf="!schedLoaded && !reqLoaded"></loading>
+<div class="summary_container" *ngIf="schedLoaded">
     <div class="row">
         <div class="value_card">
             <span class="title">Schedule Name</span>
@@ -46,7 +47,7 @@
 </div>
 
 
-<div class="response_container">
+<div class="response_container" *ngIf="reqLoaded">
     <h2 class="responses_title">Responses</h2>
     <div *ngFor="let res of responses">
         <request-response [request]="res"></request-response>
