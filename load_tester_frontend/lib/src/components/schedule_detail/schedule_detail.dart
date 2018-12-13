@@ -1,29 +1,34 @@
+import 'dart:async';
+
 import 'package:angular/angular.dart';
 import 'package:angular_components/angular_components.dart';
+import 'package:angular_forms/angular_forms.dart';
 import 'package:angular_router/angular_router.dart';
 import 'package:firebase/firestore.dart' as fs;
 import 'package:load_tester_frotend/src/components/components.dart';
 import 'package:load_tester_frotend/src/models/Schedule.dart';
 import 'package:load_tester_frotend/src/models/models.dart';
+import 'package:rxdart/rxdart.dart';
 
 @Component(
   selector: 'schedule-detail',
   directives: const [
     OnActivate,
     OnInit,
-    NgModel,
-    NgFor,
-    NgIf,
     RequestResponseComponent,
     MaterialIconComponent,
     coreDirectives,
     LoadingComponent,
+    MaterialButtonComponent,
+    MaterialInputComponent,
+    formDirectives,
   ],
   templateUrl: 'schedule_detail.html',
   styleUrls: const [
     'schedule_detail.css',
     'package:angular_components/css/mdc_web/card/mdc-card.scss.css',
   ],
+  pipes: [commonPipes],
 )
 class ScheduleDetailComponent implements OnActivate {
   final Router _router;
@@ -33,6 +38,21 @@ class ScheduleDetailComponent implements OnActivate {
   Stream<fs.QuerySnapshot> _requestStream;
   Schedule schedule = new Schedule();
   List<RequestResponse> responses = new List<RequestResponse>();
+  StreamController<List<RequestResponse>> showController =
+      new StreamController();
+
+  // init showCount at 10
+  int showCount = 3;
+
+  List<RequestResponse> get shownResponses {
+    int size = showCount;
+    if (responses.length < size) {
+      size = responses.length;
+    }
+    return responses?.getRange(0, size)?.toList();
+  }
+
+  final int debounceMilli = 300;
 
   // loading varaibles to help with the chopiness
   bool schedLoaded = false;
@@ -42,7 +62,9 @@ class ScheduleDetailComponent implements OnActivate {
 
   void handleScheduleSnapShots() async {
     var snap = await _scheduleDoc.get();
-    _scheduleDoc.onSnapshot.listen((data) {
+    Observable(_scheduleDoc.onSnapshot)
+        .debounce(new Duration(milliseconds: debounceMilli))
+        .listen((data) {
       if (data.exists) {
         this.schedule = Schedule.fromJson(data.data());
         this.schedLoaded = true;
@@ -50,13 +72,19 @@ class ScheduleDetailComponent implements OnActivate {
     });
   }
 
-  void handleRequestSnapShots() {
-    _requestStream.listen((data) {
+  void handleRequestSnapShots() async {
+    List<RequestResponse> tempResponses;
+    Observable(_requestStream)
+        .debounce(new Duration(milliseconds: debounceMilli))
+        .listen((data) {
+      tempResponses = new List();
       for (var doc in data.docChanges()) {
         RequestResponse resp = RequestResponse.fromJson(doc.doc.data());
-        this.responses.add(resp);
-        this.reqLoaded = true;
+        tempResponses.add(resp);
       }
+      this.responses.addAll(tempResponses);
+      this.showController.add(shownResponses);
+      this.reqLoaded = true;
     });
   }
 
@@ -76,8 +104,8 @@ class ScheduleDetailComponent implements OnActivate {
         .where("schedule_id", "==", _scheduleId)
         .onSnapshot;
 
-    handleRequestSnapShots();
-    handleScheduleSnapShots();
+    await handleRequestSnapShots();
+    await handleScheduleSnapShots();
   }
 
   String _getScheduleIdFromUrl(String url) {
@@ -94,5 +122,10 @@ class ScheduleDetailComponent implements OnActivate {
       case "modified":
         break;
     }
+  }
+
+  void showMore() {
+    showCount += showCount;
+    this.showController.add(shownResponses);
   }
 }

@@ -32,11 +32,12 @@ const serviceAccountJson = `{"type":"service_account","project_id":"load-tester-
 
 func main() {
 	// CREATE FIREBASE APP
-	opt := option.WithCredentialsJSON([]byte(serviceAccountJson));
+	opt := option.WithCredentialsJSON([]byte(serviceAccountJson))
 	app, err := firebase.NewApp(context.Background(), nil, opt)
 	if err != nil {
 		panic(fmt.Errorf("error initializing app: %v", err))
 	}
+
 	server := Server{httpClient: &http.Client{}, fireApp: app}
 	server.Run()
 }
@@ -52,15 +53,16 @@ func (s Server) Run() {
 	e := echo.New()
 	e.Use(middleware.Logger())
 	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
-		AllowOrigins: []string{"http://localhost:8080", "http://connector2.ngrok.io"},
+		AllowOrigins: []string{"http://localhost:8080", "http://connector2.ngrok.io", "*"},
 		AllowMethods: []string{http.MethodGet, http.MethodPut, http.MethodPost, http.MethodDelete},
 	}))
 	e.POST("schedule/request", s.CreateScheduleRequest)
 	e.GET("schedule/:schedule_id/stop", s.StopRunningSchedule)
+	e.Static("/", "./load_tester_frontend/build")
 	e.Start(":9000")
 }
 
-const MAX_CONCURRENT = 10
+const MAX_CONCURRENT = 3
 
 // This method will take a schedule id as a path variable. It will then check to see if this schedule is running
 // if it is running stop the schedule, if not, return not found
@@ -80,6 +82,7 @@ func (s Server) StopRunningSchedule(c echo.Context) error {
 func (s Server) CreateScheduleRequest(c echo.Context) error {
 	// todo validate inputs
 	context := context2.Background()
+	startTime := time.Now()
 	schedRequest := &requests.ScheduleRequest{}
 	err := c.Bind(schedRequest)
 	if err != nil {
@@ -141,32 +144,49 @@ func (s Server) CreateScheduleRequest(c echo.Context) error {
 	sentRequestCount := int32(0)
 	longestDuration := int32(0)
 	shortestDuration := int32(math.MaxInt32)
+	// the number of items that we have written to fire base
+	processedCount := int32(0)
+	processChan := make(chan bool)
 	go func() {
 		for {
 			select {
 			case resp := <-respChannel:
-				s.createRequestResponse(resp, refId)
-				// add to total
-				atomic.AddInt32(&totalDuration, int32(resp.Duration))
-				// add to sent
-				atomic.AddInt32(&sentRequestCount, int32(1))
-				// update sent
-				s.updateSentRequestCount(s.getSchedule(refId), sentRequestCount)
-				// update average
-				s.updateAverageDuration(s.getSchedule(refId), totalDuration/sentRequestCount)
-				// new longest dur
-				if resp.Duration > int(longestDuration) { // new longest dur
-					atomic.StoreInt32(&longestDuration, int32(resp.Duration))
-					// update firebase
-					s.updateLongestDuration(s.getSchedule(refId), longestDuration)
-				}
-				// new shortest dur
-				if resp.Duration < int(shortestDuration) {
-					atomic.StoreInt32(&shortestDuration, int32(resp.Duration))
-					// update firebase
-					s.updateShortestDuration(s.getSchedule(refId), shortestDuration)
-				}
+				go func() {
+					// NOTE
+					// we are putting these all in their own go routine so we
+					// don't have to wait for the previous items updates be written to fire base
+					// before we can read the next
+
+					s.createRequestResponse(resp, refId)
+					// add to total
+					atomic.AddInt32(&totalDuration, int32(resp.Duration))
+					// add to sent
+					atomic.AddInt32(&sentRequestCount, int32(1))
+					// update sent
+					s.updateSentRequestCount(s.getSchedule(refId), sentRequestCount)
+					// update average
+					s.updateAverageDuration(s.getSchedule(refId), totalDuration/sentRequestCount)
+					// new longest dur
+					if resp.Duration > int(longestDuration) { // new longest dur
+						atomic.StoreInt32(&longestDuration, int32(resp.Duration))
+						// update firebase
+						s.updateLongestDuration(s.getSchedule(refId), longestDuration)
+					}
+					// new shortest dur
+					if resp.Duration < int(shortestDuration) {
+						atomic.StoreInt32(&shortestDuration, int32(resp.Duration))
+						// update firebase
+						s.updateShortestDuration(s.getSchedule(refId), shortestDuration)
+					}
+
+					atomic.AddInt32(&processedCount, 1)
+					if processedCount == int32(schedRequest.RequestCount) {
+						processChan <- true
+					}
+
+				}()
 			case _ = <-doneSignal:
+			case _ = <-processChan:
 				return
 			}
 		}
@@ -182,7 +202,9 @@ func (s Server) CreateScheduleRequest(c echo.Context) error {
 
 		// UPDATING SCHEDULE WITH FINAL DATA
 		scheduleDoc := s.getSchedule(refId)
-		_, err := scheduleDoc.Set(context, map[string]int64{"end_time": time.Now().Unix()}, firestore.MergeAll)
+		// converting total duration to seconds
+		_, err := scheduleDoc.Set(context, map[string]int64{"total_duration": time.Since(startTime).Nanoseconds() / (10 ^ 9)}, firestore.MergeAll)
+		_, err = scheduleDoc.Set(context, map[string]int64{"end_time": time.Now().Unix()}, firestore.MergeAll)
 		if err != nil {
 			panic(err)
 		}

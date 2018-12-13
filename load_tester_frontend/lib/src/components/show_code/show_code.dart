@@ -9,6 +9,7 @@ import 'package:angular_components/angular_components.dart';
     MaterialIconComponent,
     MaterialButtonComponent,
     MdToast,
+    NgIf,
   ],
   templateUrl: 'show_code.html',
   styleUrls: const [
@@ -20,6 +21,7 @@ class ShowCodeComponent {
   String text;
   @ViewChild('showToast')
   MdToast toastElement;
+  bool showCode = false;
 
   ShowCodeComponent();
 
@@ -42,5 +44,9 @@ class ShowCodeComponent {
     textarea.select();
     final result = document.execCommand('copy');
     textarea.remove();
+  }
+
+  void toggleShowResponse() {
+    this.showCode = !this.showCode;
   }
 }
