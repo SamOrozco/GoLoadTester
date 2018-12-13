@@ -53,7 +53,10 @@ func (s Server) Run() {
 	e := echo.New()
 	e.Use(middleware.Logger())
 	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
-		AllowOrigins: []string{"http://localhost:8080", "http://connector2.ngrok.io", "*"},
+		AllowOrigins: []string{
+			"http://localhost:8080",
+			"http://connector2.ngrok.io",
+			"*"},
 		AllowMethods: []string{http.MethodGet, http.MethodPut, http.MethodPost, http.MethodDelete},
 	}))
 	e.POST("schedule/request", s.CreateScheduleRequest)
