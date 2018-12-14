@@ -58,4 +58,4 @@
   unused-packages = true
 
 [metadata.heroku]
-   root-package = "github.com/samorozco/goloadtester"
+   root-package = "github.com/samorozco/goloadtester/load_tester_backend/main"
