@@ -1,9 +1,8 @@
 FROM golang:1.11.3
-ARG base=orozco
-ARG binary=server
-# creating a backend dir and copying to the dir so our imports
-# will work correctly
-ARG back_end=$base/src/load_tester/load_tester_backend
-COPY . $back_end
-#build our golang binary
-RUN cd $back_end && go install .
+
+ARG location=/test_dep
+COPY . $location
+RUN ls $location
+WORKDIR $location/load_tester_backend
+RUN ls
+RUN go install .

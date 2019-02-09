@@ -13,9 +13,9 @@ import (
 	"math"
 	"net/http"
 	"sync/atomic"
-	"time"
-	"tester/requests"
 	"tester/pulse"
+	"tester/requests"
+	"time"
 )
 
 type Server struct {
@@ -61,8 +61,11 @@ func (s Server) Run() {
 	}))
 	e.POST("schedule/request", s.CreateScheduleRequest)
 	e.GET("schedule/:schedule_id/stop", s.StopRunningSchedule)
-	e.Static("/", "./load_tester_frontend/build")
-	e.Start(":9000")
+	e.Static("/", "built-web")
+	err := e.Start(":9000")
+	if err != nil {
+		panic(err)
+	}
 }
 
 const MAX_CONCURRENT = 3
