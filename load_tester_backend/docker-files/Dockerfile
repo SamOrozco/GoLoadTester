@@ -1,15 +1,14 @@
-FROM golang:1.11.3
-ARG base=orozco
-ARG binary=server
-# creating a backend dir and copying to the dir so our imports
-# will work correctly
-ARG back_end=$base/src/load_tester/load_tester_backend
-COPY . $back_end
-#build our golang binary
-RUN cd $back_end && go build -o $binary .
-
-ARG command=$back_end/$binary
-RUN chmod +x $command
-RUN echo $commanda
-CMD $command
+FROM base_tester:latest
+# PROJECT LOCATION
+ARG base=/tester
+# BINARY NAME
+ARG binary=load_tester
+# COPY PROJECTS
+COPY . $base
+# WORKDIR
+WORKDIR $base
+# BUILD BINARY
+RUN go build -o $binary .
+#
+CMD ["/tester/load_tester"]
 

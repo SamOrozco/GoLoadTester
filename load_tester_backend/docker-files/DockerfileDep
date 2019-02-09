@@ -6,9 +6,4 @@ ARG binary=server
 ARG back_end=$base/src/load_tester/load_tester_backend
 COPY . $back_end
 #build our golang binary
-RUN cd $back_end && go build -o $binary .
-
-ARG command=$back_end/$binary
-RUN chmod +x $command
-RUN echo $commanda
-CMD $command
+RUN cd $back_end && go install .
