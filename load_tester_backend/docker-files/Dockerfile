@@ -6,9 +6,9 @@ ARG binary=load_tester
 # COPY PROJECTS
 COPY . $base
 # WORKDIR
-WORKDIR $base
+WORKDIR $base/load_tester_backend
 # BUILD BINARY
 RUN go build -o $binary .
 #
-CMD ["/tester/load_tester"]
+CMD ["/tester/load_tester_backend/load_tester"]
 
