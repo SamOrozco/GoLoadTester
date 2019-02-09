@@ -10,12 +10,12 @@ import (
 	"github.com/labstack/echo/middleware"
 	context2 "golang.org/x/net/context"
 	"google.golang.org/api/option"
-	"load_tester/load_tester_backend/pulse"
-	"load_tester/load_tester_backend/requests"
 	"math"
 	"net/http"
 	"sync/atomic"
 	"time"
+	"tester/requests"
+	"tester/pulse"
 )
 
 type Server struct {
