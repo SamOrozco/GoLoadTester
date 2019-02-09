@@ -1,11 +1,18 @@
 <div class="actions row">
     <material-button class="copy_button"
                      raised
-                     (trigger)="copyMessage()">Copy
+                     (trigger)="copyMessage()">Copy Response Body
         <material-icon class="copy_icon" icon="file_copy"></material-icon>
     </material-button>
+    <material-button class="copy_button"
+                     raised
+                     (trigger)="toggleShowResponse()">
+        <span *ngIf="!showCode">Show Response Body</span>
+        <span *ngIf="showCode">Hide Response Body</span>
+        <material-icon class="copy_icon" icon="open_in_new"></material-icon>
+    </material-button>
 </div>
-<div class="small_code">
+<div class="small_code" *ngIf="showCode">
     <pre>
         <code>
             {{text}}

@@ -40,3 +40,11 @@
   color: #ff7f24;
   padding: 8px;
 }
+
+.response_filter {
+
+}
+
+.response_filter .value{
+  font-size: 24px;
+}

@@ -23,6 +23,8 @@ class Schedule {
   int longestDuration;
   @JsonKey(name: "current_request_count")
   int currentRequestCount;
+  @JsonKey(name: "total_duration")
+  int totalDuration;
   @JsonKey(name: "url")
   String url;
 
@@ -49,6 +51,14 @@ class Schedule {
       return "";
     }
     var secDur = averageDuration;
+    return "$secDur (ms)";
+  }
+
+  String get totalDurationString {
+    if (totalDuration == null) {
+      return "";
+    }
+    var secDur = totalDuration / 1000;
     return "$secDur (ms)";
   }
 

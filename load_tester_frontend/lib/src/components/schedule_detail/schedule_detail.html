@@ -19,6 +19,10 @@
             <span class="title">End Time</span>
             <span class="value">{{schedule.endTimeString}}</span>
         </div>
+        <div class="value_card">
+            <span class="title">Total Duration</span>
+            <span class="value">{{schedule.totalDurationString}}</span>
+        </div>
     </div>
     <div class="row">
         <div class="value_card">
@@ -49,7 +53,15 @@
 
 <div class="response_container" *ngIf="reqLoaded">
     <h2 class="responses_title">Responses</h2>
-    <div *ngFor="let res of responses">
+    <div class="row response_filter">
+        <div class="title">
+            Show Count
+        </div>
+        <div class="value">
+        </div>
+    </div>
+    <div *ngFor="let res of showController.stream | async">
         <request-response [request]="res"></request-response>
     </div>
+    <material-button (trigger)="showMore()">show more</material-button>
 </div>
