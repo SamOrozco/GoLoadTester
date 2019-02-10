@@ -1,6 +1,7 @@
+import 'dart:convert';
+
 import 'package:http/http.dart';
 import 'package:load_tester_frotend/src/models/models.dart';
-import 'dart:convert';
 
 class RequestService {
   final Client _http;
@@ -10,8 +11,10 @@ class RequestService {
 
   Future<ScheduleIdResponse> createRequest(ScheduleRequest request) async {
     var body = jsonEncode(request.toJson());
-    var resp = await _http.post("https://connector1.ngrok.io/schedule/request",
-        headers: {"Content-type": "application/json"}, body: body);
+    var resp = await _http.post(
+        "https://gentle-wave-92777.herokuapp.com/schedule/request",
+        headers: {"Content-type": "application/json"},
+        body: body);
     return ScheduleIdResponse.fromJson(jsonDecode(resp.body));
   }
 }

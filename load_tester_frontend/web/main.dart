@@ -36,7 +36,7 @@ void main() {
       storageBucket: "load-tester-orozco.appspot.com");
   _store = firestore();
   var client = new BrowserClient();
-  var environment = new Environment("http://connector1.ngrok.io");
+  var environment = new Environment("https://gentle-wave-92777.herokuapp.com");
   _requestService = new RequestService(client, environment);
   runApp(ng.AppComponentNgFactory, createInjector: appInjector);
 }

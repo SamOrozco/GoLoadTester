@@ -12,6 +12,7 @@ import (
 	"google.golang.org/api/option"
 	"math"
 	"net/http"
+	"os"
 	"sync/atomic"
 	"tester/pulse"
 	"tester/requests"
@@ -62,7 +63,7 @@ func (s Server) Run() {
 	e.POST("schedule/request", s.CreateScheduleRequest)
 	e.GET("schedule/:schedule_id/stop", s.StopRunningSchedule)
 	e.Static("/", "built-web")
-	err := e.Start(":9000")
+	err := e.Start(fmt.Sprintf(":%s", s.getPort()))
 	if err != nil {
 		panic(err)
 	}
@@ -323,4 +324,8 @@ func (s Server) updateShortestDuration(docRef *firestore.DocumentRef, duration i
 	if err != nil {
 		panic(err)
 	}
+}
+
+func (s Server) getPort() string {
+	return os.Getenv("PORT")
 }
